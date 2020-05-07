@@ -1,0 +1,88 @@
+pragma solidity ^0.4.0;
+
+contract OnlineDoctor{
+    
+    struct Patient{
+        uint patient_id;
+        bytes32 patient_name;
+        bytes32 patient_password;
+        address patient_address;
+        string symptoms;
+    }
+    
+    struct Doctor{
+        bytes32 doctor_name;
+        bytes32 doctor_password;
+        address doctor_address;
+        uint doctor_balance;
+    }
+    
+    struct Prescription{
+        string prescription_content;
+    }
+    
+    struct Pharmacy{
+        bytes32 pharmacy_name;
+        bytes32 pharmacy_password;
+        address pharmacy_address;
+        string sold_medicine;
+        uint pharmacy_balance;
+    }
+    
+    uint public Diagnose_id;
+    mapping(uint => Patient) patient_map;
+    mapping(uint => Doctor) doctor_map;
+    mapping(uint => Prescription) prescription_map;
+    mapping(uint => Pharmacy) pharmacy_map;
+    
+    function new_patient(uint _patient_id, string _patient_name, string _patient_password, address _patient_address, string _symptoms) internal returns(Patient){
+
+        // new_patient who need Diagnose created
+        patient_map[Diagnose_id] = Patient(_patient_id, sha3(_patient_name),sha3(_patient_password), _patient_address, _symptoms);
+        return patient_map[Diagnose_id];
+    }
+    
+    function new_doctor(string _doctor_name, string _doctor_password, address _doctor_address, uint _doctor_balance) internal returns(Doctor){
+        doctor_map[Diagnose_id] = Doctor(sha3(_doctor_name), sha3(_doctor_password), _doctor_address, _doctor_balance);
+        return doctor_map[Diagnose_id];
+    }
+    
+    function new_prescription(string _prescription_content) internal returns(Prescription){
+        prescription_map[Diagnose_id] = Prescription (_prescription_content);
+        return prescription_map[Diagnose_id];
+    }
+    
+    function new_pharmacy(string _pharmacy_name, string _pharmacy_password, address _pharmacy_address, string _sold_medicine, uint _pharmacy_balance) internal returns(Pharmacy){
+        pharmacy_map[Diagnose_id] = Pharmacy(sha3(_pharmacy_name), sha3(_pharmacy_password), _pharmacy_address, _sold_medicine, _pharmacy_balance);
+        return pharmacy_map[Diagnose_id];
+    }
+    
+    function new_diagnose(){
+        // Diagnose_id + 1 when Diagnose happens
+        Diagnose_id ++;
+        new_patient(10525215, "Peng","12345678", 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c, "fever");
+        new_doctor("Tapi","87654321", 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C,0);
+        new_prescription("sweed");
+        new_pharmacy("Osekita", "8765432",0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB,"sweed",0);
+    }
+    
+    function Diagnose_history(uint _Diagnose_id, string _password) view returns(string,string){
+        // Only allow to view Diagnose_history when the password is correct
+        require((keccak256(_password)==patient_map[_Diagnose_id].patient_password)||
+        (keccak256(_password)==doctor_map[_Diagnose_id].doctor_password)||
+        (keccak256(_password)==pharmacy_map[_Diagnose_id].pharmacy_password));
+        
+        return (patient_map[_Diagnose_id].symptoms, prescription_map[_Diagnose_id].prescription_content);   
+    }
+    
+    function Pay_doctor (uint _Diagnose_id, uint _amount) payable{
+         Doctor storage _doctor = doctor_map[_Diagnose_id]; 
+        _doctor.doctor_balance += _amount; //increase doctor_balance
+    }
+    
+    function Pay_pharmacy(uint _Diagnose_id, uint _amount) payable{
+         Pharmacy storage _pharmacy = pharmacy_map[_Diagnose_id]; 
+        _pharmacy.pharmacy_balance += _amount; // increase pharmacy_balance
+    }
+}
+
