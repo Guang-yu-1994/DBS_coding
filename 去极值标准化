@@ -1,0 +1,74 @@
+# 去极值
+from scipy.stats.mstats import winsorize
+TOTAL_DATA["去极值"] = winsorize(TOTAL_DATA.iloc[:,1], limits=0.025) # 将最大最小0.025的数字去除
+
+import matplotlib.pyplot as plt
+TOTAL_DATA.iloc[:,1][:200].plot()
+TOTAL_DATA["去极值"][:200].plot()
+plt.show()
+
+
+
+
+
+def quantile_extreme(factor):
+    '''自己写的分位数去极值'''
+    up_scale = np.percentile(factor, up)
+    down_scale = np.percentile(factor, down)
+    factor = np.where(factor>up_scale, up_scale, factor)
+    factor = np.where(factor<down_scale, down_scale, factor)
+    return factor
+#  quantile_extreme(TOTAL_DATA.iloc[:,1], 97.5, 2.5) 去除大于97.5% 和小于2.5% 的数
+
+
+
+def mad(factor):
+    """中位数去极值必须一列一列的去，不能去整个dataframe"""
+    me = np.median(factor) # 中位数
+    MAD = np.median(abs(factor - me))# 求与中位数的绝对偏差, 得出MAD
+    
+    up_scale = me + (3 * 1.4826 * MAD) # 3倍中位数去极值
+    down_scale = me - (3 * 1.4826 * MAD)
+    factor = np.where(factor>up_scale, up_scale, factor)
+    factor = np.where(factor<down_scale, down_scale, factor)
+    return factor
+
+TOTAL_DATA["去极值"] = mad(TOTAL_DATA.iloc[:,1]) 
+TOTAL_DATA["去极值"][:200].plot()
+TOTAL_DATA.iloc[:,1][:200].plot()
+
+
+
+
+
+# 正态分布去极值 一般拉到3个标准差之内 3sigma
+def three_sigma(factor):
+    avg = factor.mean()
+    std = factor.std()
+    up_scale = avg + 3 * std
+    down_scale = avg - 3 * std
+    factor = np.where(factor>up_scale, up_scale, factor)
+    factor = np.where(factor<down_scale, down_scale, factor)
+    return factor
+
+TOTAL_DATA["去极值"] = three_sigma(TOTAL_DATA.iloc[:,1]) 
+TOTAL_DATA["去极值"][:200].plot()
+TOTAL_DATA.iloc[:,1][:200].plot()
+
+# 标准化
+from sklearn.preprocessing import scale # 可以直接去整个dataframe
+
+# 市值中性化,避免市值过于影响选股, 之前要先去极值标准化
+from sklearn.linear_model import LinearRegression
+
+market_cap = mad(market_cap).reshape(-1,1)
+#     market_cap = np.array(market_cap).reshape(-1,1)
+def stand_cap(market_cap, factor):
+    '''去除因子存在的市值影响'''
+    factor = mad(TOTAL_DATA.iloc[:,1]).reshape(-1,1)
+    reg = LinearRegression()
+    reg.fit(market_cap, factor)
+    factor_pred = reg.predict(factor)
+    return factor -  factor_pred
+# factor_pred = market_cap * w + b
+# stand = factor - factor_pred ， 预测结果与真实因子之间的差值就是因子不受市值影响的部分，也就是去除市值影响的
