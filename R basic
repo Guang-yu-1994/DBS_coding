@@ -1,0 +1,1134 @@
+# 向量创建
+A <- c(1:3) # 1 2 3
+B <- seq(from=1, to=3, by=1) # 1 2 3
+C <- rep(0,5) # 0 0 0 0 0
+
+# append 
+append(A, 4) # 1 2 3 4 此时不改变A， 如果要改变 A <- append(A, 4)
+A <- append(A, 5)
+A <- append(A, 100)
+A <-append(A, 100, after=5) # after是下标，不是具体数字
+A #  1   2   3   5 100 100
+
+# 删除
+A <- A[-2] # 删除第二个元素
+A #  1   3   5 100 100
+A <- A[-c(4,5)] # 删除位置4,5
+A # 1 3 5
+
+#其他函数
+# sum(XX), max(XX), min(XX), range(XX), mean(XX), var(XX), sort(XX)
+# rev(XX)反排列， rev(sort(XX)), prod(XX)乘积, sqrt(XX)开根, sd(XX)标准差
+A <- append(A, c(23,45))
+A
+rev(A)
+var(A)
+sd(A)
+sort(A, decreasing = TRUE) # 降序
+rev(sort(A)) # 降序
+prod(A)
+prod(1:5) # 1到5阶乘
+
+
+
+# 矩阵
+mat <- matrix(c(1:12), nrow=3, ncol=4) # 3*4 的 值为1到12的矩阵
+mat
+dim(mat) # 3 4 获取维数
+
+# 矩阵与标量相乘 *， 矩阵与矩阵相乘%*%
+mat*3 # 每个元素乘以3
+# 矩阵相乘需要左边矩阵列数等于右边矩阵行数
+mat1 <- matrix(c(1:16), nrow=4)
+mat %*% mat1
+
+# 矩阵索引
+#　矩阵列取名
+colnames(mat) <- c("Index", "English", "Japanese", "Chinese")
+mat[1,2] # (1,2)
+mat[2,] # 第2行
+mat[,4] # 第4列
+mat[c(1:3),c(1,4)] # 1到3行， 第1列第4列
+
+# 逻辑判断
+mat[,2] >= 5 # 第二列大于等于5， 返回布尔向量
+mat[mat[,2] >= 5,] # 第二列大于等于5，的所有行数据，返回矩阵
+
+# which
+which(mat[,4]>=12)# 第四列大于等于12的是第几行， 3
+
+# 矩阵操作 Apply(mat, 1, f) f是函数，可自己定义
+apply(mat, 1, mean) # 对行取平均值
+apply(mat, 2, sum) # 对列取总值
+
+# R语言数组， 少用
+Arr = array(c(1:24), dim=c(2,3,4)) # 2*3*4 的数组
+Arr
+Arr[1,,]# 第一维
+dim(Arr[1,,]) # 3*4
+
+# 列表，类似Python的字典
+a <- 2
+b <- 'hello'
+c <- c(1:4)
+L <- list(a,b,c)
+print(L)
+L[[2]] # 双括号访问元素
+
+# 列表索引
+L <- list(a=a,b=b,c=c) # 给列表元素取名字
+L$b # "hello"
+
+# 绑定 attach()
+attach(L)
+a # 2
+b # "hello"
+c # 1 2 3 4
+
+# 转化为向量unlist()
+L <- unlist(L)
+L[1] #   a "2" 
+L[2] # b "hello" 
+L[3] # c1 "1" 
+L[4] # c2 "2" 
+L[5] # c3 "3" 
+L[6] # c4 "4" 
+
+# lapply 返回一个列表
+l <- list(a=a, b=c(2:8), c=c)
+l
+lapply(l, sum) # 对列表每一列求和
+lapply(l, sum)[2] # 对列表第二列求和
+lapply(l, sum)$b # 对列表第二列求和
+
+# sapply 返回一个向量或者矩阵
+sapply(l, sum) # 计算每一列和返回矩阵
+
+
+# dataframe, 每列数据类型一致，各列数据类型可不同
+
+
+
+# 逻辑运算
+
+#　|| && 作用第一个元素
+
+# | & 作用每一个元素
+
+a <- c(TRUE, FALSE, TRUE)
+b <- c(TRUE, FALSE, FALSE)
+
+a&b # TRUE FALSE FALSE
+a|b # TRUE FALSE  TRUE
+a&&b # TRUE
+a||b  # TRUE
+
+#all 判断所有元素
+all(a==2) # a 中所有元素为2
+
+# any只要一个元素满足
+any(a==FALSE) # TRUE
+
+1 %in% c(1,2,3) # 1 在这个向量里面吗
+a <- c(1,2,3,4,1)
+which(a==1) # 1再a中的1 5个位置
+which(1 %in% a) # 匹配到第一个就不匹配
+which(1 == a) # 1再a中的1 5个位置
+
+
+
+
+a <- factor(c('A', 'B', 'C', 'A', 'B'))
+a
+# [1] A B C A B
+# Levels: A B C
+a <- factor(c('A', 'B', 'C', 'A', 'B'), levels = c('A', 'B'))
+a
+# [1] A    B    <NA> A    B   
+# Levels: A B
+
+a <- factor(c('A', 'B', 'C', 'A', 'B'),levels = c('A', 'B','C'), labels=c("优",'良','差'))
+a
+# [1] 优 良 差 优 良
+# Levels: 优 良 差
+
+# exclude 剔除
+a = a <- factor(c('A', 'B', 'C', 'A', 'B'), exclude = 'A')
+a
+# [1] <NA> B    C    <NA> B   
+# Levels: B C
+
+color <- c('G','G','R','Y','G','Y','Y','R','Y')
+col <- factor(color)
+col1 <- factor(color, levels = c('G','R','Y'), labels = c('Green','Red','Yellow'))
+# 通过label可以减少代码字数
+col2 <- factor(color, levels = c('G','R','Y'), labels = c('1','2','3'))
+col2
+# [1] 1 1 2 3 1 3 3 2 3
+# Levels: 1 2 3
+
+# 转化为向量
+as.vector(col2)
+# [1] "1" "1" "2" "3" "1" "3" "3" "2" "3"
+
+score <- c('A','C','A','C','B')
+score1 <- ordered(score, levels=c('C','B','A')) #ordered创建有序因子
+class(score1) #"ordered" "factor"
+score1
+# [1] A C A C B
+# Levels: C < B < A
+
+#　cut()
+exam <- c(98,56,87,12,65,56,99,66,55,44,11,22,33,77)
+exam <- cut(exam, breaks = 3) # 分3组,步长是最大值减去最小值除以3
+exam
+# [1] (69.7,99.1] (40.3,69.7] (69.7,99.1] (10.9,40.3] (40.3,69.7] (40.3,69.7]
+# [7] (69.7,99.1] (40.3,69.7] (40.3,69.7] (40.3,69.7] (10.9,40.3] (10.9,40.3]
+# [13] (10.9,40.3] (69.7,99.1]
+# Levels: (10.9,40.3] (40.3,69.7] (69.7,99.1]
+
+#　tapply()
+gender <- c('f','m','m','m','f')
+age <- c(12,35,25,12,25) 
+tapply(age, gender, mean)# 根据性别分组，计算年龄均值
+
+
+
+
+# 解方程
+
+# y = ax + b
+f <- function(x,a,b){return(a*x + b)}
+# 当a=5, b=10, y = 5x + 10
+# 在-10到10直接寻找5x+10=0的根
+root <- uniroot(f, c(-10,10),5,10,tol = 0.0001)
+root$root # -2
+
+f2 <- function(x,a,b,c){return(a*x^2 + b*x +c)}
+root2 <- uniroot(f2, c(-4,-2.55),a=1,b=5,c=6,tol = 0.001)
+root2$root
+
+
+# 解方程组
+# 3X1 + 5X2 = 4
+# X1 + 2X2 = 1
+f <- matrix(c(3,5,1,2), nrow=2, byrow = TRUE)
+f
+#        [,1] [,2]
+# [1,]    3    5
+# [2,]    1    2
+rf <- matrix(c(4,1), nrow = 2)
+rf
+#        [,1]
+# [1,]    4
+# [2,]    1
+solve(f,rf) #解二元一次方程 X1=3， X2=-1
+#  　　　[,1]
+# [1,]    3
+# [2,]   -1
+
+
+
+
+name <- c('kg', 'ky', 'kq')
+sex <- c('m', 'm', 'f')
+age <- c(22, 21, 24)
+df <- data.frame(name, sex, age)
+df
+class(df) # 查看数据类型 "data.frame"
+
+# 访问，索引
+df[1,2] # 1行2列
+df$name[1] # name列第1个元素
+df$score <- c(80:82) # 添加新列
+df
+
+# 查询score等于81的
+df[which(df$score == 81),]
+
+# 转化为dataframe
+mat1 = matrix(c(1:12), nrow = 3)
+df1 = as.data.frame(mat1)
+df1 
+# V1 V2 V3 V4
+# 1  1  4  7 10
+# 2  2  5  8 11
+# 3  3  6  9 12
+
+df1$V1 #　访问Ｖ１　列
+
+
+# 链接 merge()
+df2 <- data.frame(name = name, weight = c(60:62))
+df2$age <- c(20,23,24)
+df2
+# name weight age
+# 1   kg     60  20
+# 2   ky     61  23
+# 3   kq     62  24
+df
+# name sex age score
+# 1   kg   m  22    80
+# 2   ky   m  21    81
+# 3   kq   f  24    82
+df3 = merge(df, df2, by.x = 'age', by.y = 'age') # 左边用age，右边用age
+df3
+# age name.x sex score name.y weight
+# 1  24     kq   f    82     kq     62
+
+df
+# name sex age score
+# 1   kg   m  22    80
+# 2   ky   m  21    81
+# 3   kq   f  24    82
+attach(df) # 绑定
+
+
+# 合并 多用
+# rbind() 按行合并，要求列数相同
+# cbind() 按列合并，要求行数相同
+cbind(df, df2)
+# name sex age score name weight age
+# 1   kg   m  22    80   kg     60  20
+# 2   ky   m  21    81   ky     61  23
+# 3   kq   f  24    82   kq     62  24
+
+df <- df[-1] # 只取后面两列
+df
+# sex age score
+# 1   m  22    80
+# 2   m  21    81
+# 3   f  24    82
+df <- df[-1] # 只取后面两列
+df
+# age score
+# 1  22    80
+# 2  21    81
+# 3  24    82
+
+lapply(df, sum) #对各列求和, 返回list
+# $age
+# [1] 67
+# 
+# $score
+# [1] 243
+
+sapply(df, sum) #返回matrix
+# age score 
+# 67   243 
+
+
+
+
+# 绘图
+# help(函数名,包)
+# help.start() # 跳转帮助网页
+help.start()
+help(unite)
+example(persp) # 查看函数示例
+
+# plot(x,y,...)
+# type 'l' 线图。类型默认散点图
+# main 标题
+# xlab, ylab 坐标轴标题
+# col 颜色
+plot(c(1:3), c(1:3)+2.5, type='l', main='wmx',xlab = 'x', ylab='y')
+# 条形图,names.arg各个bar名称，ylim是y轴数据范围
+barplot(c(1,2,3), names.arg = c('A','B','C'), ylim=c(1,10))
+barplot(c(1,2,3), legend.text = c('A','B','C'), ylim=c(1,10), col = rainbow(3))
+barplot(c(1,2,3), legend.text = c('A','B','C'), horiz=TRUE, col = rainbow(3))
+
+# 直方图 freq默认TRUE，频率分布直方图
+hist(iris[,1])
+hist(iris[,1], freq=FALSE)
+
+# 饼图 labels标签 radius半径
+pie(c(1,2,3), labels = c('A','B','C'),radius = 1)
+
+# boxplot 箱图 notch 是否缺口, names变量名
+boxplot(iris[,c(1:4)], notch = TRUE, names=c('SL','SW','PL','PW'))
+
+
+# par
+par(mfrow=c(2,2)) # 2*2 窗口作图
+barplot(c(1:3))
+pie(c(1:3))
+plot(c(1:3))
+boxplot(c(1:3))
+
+
+
+# qplot 快速作图
+# install.packages('ggplot2')
+library('ggplot2')
+attach(diamonds)
+names(diamonds) # 有那几列
+# [1] "carat"   "cut"     "color"   "clarity" "depth"   "table"   "price"   "x" 
+# [9] "y"       "z" 
+dim(diamonds) # 53940    10
+dat <- diamonds[sample(nrow(diamonds), 200), ] # 取前200行
+dim(dat) # 200  10
+
+plot(dat$carat, dat$price)
+qplot(dat$carat, dat$price)
+qplot(log(dat$carat), log(dat$price))
+
+unique(color)
+# [1] E I J H F G D
+# Levels: D < E < F < G < H < I < J
+unique(dat$cut)
+# [1] Ideal     Premium   Good      Very Good Fair     
+# Levels: Fair < Good < Very Good < Premium < Ideal
+
+# 自动分配颜色，切按照dat中cut一列的来分组并确定形状,alpha，点越多颜色越深
+qplot(carat, price, data=dat, colour=color, shape=cut, alpha=I(1/10))
+# 点图
+qplot(carat, price, data=dat, alpha=I(1/10),geom='point')
+# 箱图
+qplot(cut, price, data=dat, alpha=I(1/10),geom='boxplot',colour=cut)
+# 线图
+qplot(carat, price, data=dat, alpha=I(1/10),geom='line')
+# 柱状图
+qplot(color, data=dat, alpha=I(1/10),geom='bar')
+
+# 保存图片
+setwd('E:\\DBS\\my_courses\\DBS machine learning\\R图片') # 设置工作目录
+jpeg('1.jpg') # 图片名称
+qplot(color, data=dat, alpha=I(1/10),geom='bar')
+dev.off()
+
+# 批量作图保存
+d <- c(1,2,3,2)
+for (i in c(1:10)) {
+  fileName <- paste0(i,'jpg')
+  jpeg(fileName)
+  plot(d)
+  dev.off()
+}
+
+
+
+
+# 读取数据
+
+# 读取txt, read.table(file, sep, header) # header是第一行是否是数据
+setwd('E:\\DBS\\my_courses\\DBS machine learning\\R数据')
+dat <- read.table('data.txt', sep=' ', header = TRUE)
+dat
+#   A B C D
+# 1 1 2 3 4
+# 2 2 2 3 4
+dat <- read.table('data.txt', sep=' ')
+dat
+#    V1 V2 V3 V4
+# 1  A  B  C  D
+# 2  1  2  3  4
+# 3  2  2  3  4
+
+
+# 保存数据 write.table(data,file,sep) 
+setwd('E:\\DBS\\my_courses\\DBS machine learning\\R数据')
+write.table(dat, 'data.csv', sep=',')
+write.table(dat, 'data2.txt', sep='\t',col.names=FALSE,row.names = FALSE)
+write.table(dat, 'data2.csv', sep=',',col.names=FALSE,row.names = FALSE)
+
+
+# 读取csv， 也可以读取txt，
+setwd('E:\\DBS\\my_courses\\DBS machine learning\\R数据')
+dat <- read.csv('data2.csv', header=FALSE)
+dat
+write.table(dat,'data4.csv',row.names = FALSE)
+#    V1 V2 V3 V4
+# 1  A  B  C  D
+# 2  1  2  3  4
+# 3  2  2  3  4
+dat <- read.csv('data2.csv', header=TRUE)
+dat
+#   A B C D
+# 1 1 2 3 4
+# 2 2 2 3 4
+
+
+
+
+
+# 进击分析
+# sample(x,size,replace=F)
+# size 抽取的样本个数
+# replace F是相邻2次不放回抽取，T是放回抽取
+?sample
+x = c(1:100)
+sample(x, size=20)
+sample(x, size=20, replace = T)
+
+sample(1000, 20)
+
+y <- data.frame(name=c('kg','ky','kq'), age=c(20:22), score=c(88,89,79))
+y
+#    name age score
+# 1   kg  20    88
+# 2   ky  21    89
+# 3   kq  22    79
+y[sample(dim(y)[1], 2),] # 随意抽取2行
+#    name age score
+# 2   ky  21    89
+# 3   kq  22    79
+y[,sample(dim(y)[2], 2)] # 随意抽取2列
+#    score name
+# 1    88   kg
+# 2    89   ky
+# 3    79   kq
+
+
+# 排序
+a <- c(4,2,1,3)
+sort(a, decreasing = TRUE)
+# [1] 4 3 2 1
+
+order(a) # argsort [1] 3 2 4 1
+a[order(a)] # [1] 1 2 3 4
+
+dat <- data.frame(name=c('A','B','C'),score=c(100,67,89))
+dat
+#    name score
+# 1    A   100
+# 2    B    67
+# 3    C    89
+dat[order(dat$score, decreasing = TRUE),]
+#    name score
+# 1    A   100
+# 3    C    89
+# 2    B    67
+
+# apply(数据, 方向(1或者2), 公式), 
+x <- cbind(3,c(1:5,4:1))
+x
+#       ,1] [,2]
+# [1,]    3    1
+# [2,]    3    2
+# [3,]    3    3
+# [4,]    3    4
+# [5,]    3    5
+# [6,]    3    4
+# [7,]    3    3
+# [8,]    3    2
+# [9,]    3    1
+apply(x,1,mean) # 球每一行均值
+# [1] 2.0 2.5 3.0 3.5 4.0 3.5 3.0 2.5 2.0
+
+
+jishu <- function(x){
+  # 返回TRUE表示是奇数
+  return(x %% 2 ==1)
+}
+apply(x,1,jishu)
+#      [,1]  [,2] [,3]  [,4] [,5]  [,6] [,7]  [,8] [,9]
+# [1,] TRUE  TRUE TRUE  TRUE TRUE  TRUE TRUE  TRUE TRUE
+# [2,] TRUE FALSE TRUE FALSE TRUE FALSE TRUE FALSE TRUE
+
+# lapply 主要是操作列表
+z <- list(a1=c(1:8), a2=c(TRUE, FALSE,FALSE,TRUE,TRUE))
+z
+# $a1
+# [1] 1 2 3 4 5 6 7 8
+# 
+# $a2
+# [1]  TRUE FALSE FALSE  TRUE  TRUE
+
+lapply(z,sum)
+# $a1
+# [1] 36
+# 
+# $a2
+# [1] 3
+lapply(z,quantile)
+# $a1
+# 0%  25%  50%  75% 100% 
+# 1.00 2.75 4.50 6.25 8.00 
+# 
+# $a2
+# 0%  25%  50%  75% 100% 
+# 0    0    1    1    1 
+
+# sapply 返回的是矩阵
+sapply(z, quantile)
+#       a1 a2
+# 0%   1.00  0
+# 25%  2.75  0
+# 50%  4.50  1
+# 75%  6.25  1
+# 100% 8.00  1
+
+#　tapply 可统计频率
+a <- as.factor(c(1,1,2,3,3))
+tapply(a, a, length) 
+# 1 2 3 
+# 2 1 2 
+
+
+# 随机数
+# 服从正太分布的随机数
+# rnorm(n, mean=0, sd=1)
+rnorm(10, mean=1, sd=2) # 10个均值1标准差2
+# [1]  1.3965890  1.3195360 -3.5986201  1.3906999  0.7846271  0.6451168 -0.3225579
+# [8]  5.5576338 -1.5769282 -1.8780778
+
+# 均匀分布随机数 runif(m, min=0,max=1)
+runif(2, min=0, max=1) #0到1之间生成2个0-1直接均匀分布的随机数返回向量
+# [1] 0.6081029 0.9410208
+
+
+# 查找重复
+a <- c(1,4,6,8,4,3,6,6,6,8,6,1)
+b <- table(a)
+b
+# a
+# 1 3 4 6 8 
+# 2 1 2 5 2 
+names(b) 
+# [1] "1" "3" "4" "6" "8"
+b == max(b) #频率最高的
+# a
+# 1     3     4     6     8 
+# FALSE FALSE FALSE  TRUE FALSE
+names(b)[b == max(b)]
+# [1]"6"
+as.numeric(names(b)[b == max(b)]) # 将字符串转化为数字
+# [1] 6
+as.numeric(names(table(a))[table(a) == max(table(a))]) # 一行代码找mode
+# 自定义找众数的函数
+getMode <- function(x){
+  tb = table(x)
+  max_freq = names(tb)[tb==max(tb)]
+  return(as.numeric(max_freq))
+}
+getMode(a)
+
+
+# source 函数 相当于python的import
+setwd('E:\\DBS\\my_courses\\DBS machine learning')
+source('getMode.R')
+getMode(c(1,2,2,3,4))
+
+# data(package='包名')查看包所带的数据集
+# data(package=.packages(all.available=TRUE)) 查看R所有数据包情况
+
+# 基本数据转换
+as.character(c(1,2)) # 转换为字符串
+# [1] "1" "2"
+as.complex(3.4)# 转换为复数
+# [1] 3.4+0i
+as.numeric(c('1','2')) # 转为数字
+# [1] 1 2
+as.double('12.3') #转为ｄｏｕｂｌｅ类型
+# 　[1] 12.3
+as.integer(c(1.2,'3.5')) # 转为整形
+# [1] 1 3
+as.logical(2) #转为逻辑，０都是ＦＡＬＳＥ，非０都是ＴＲＵＥ
+# [1] TRUE
+
+# R语言调试
+cou <- function(count){
+  s <- 0
+  i <- 1
+  while (i <= count) {
+    s <- s + i
+    browser # 调试的时候停顿,按c或者n继续执行
+    i <- i + 1
+  }
+  return(s)
+}
+debug(cou) # 进入调试模式, n 执行下一行， c执行完
+# print(变量名) 打印标量值
+# Q 是退出调试
+cou(10)
+
+
+
+# 数据探索
+# 集中程度 mean(), median(), quantile()
+# 分散程度 var() sd() range()
+dat <- iris[,c(1:4)]
+median(dat[,1]) # 第一列中位数
+quantile(dat[,1]) # 第一列四分位数
+
+# summary() 看数据摘要
+summary(dat)
+#      Sepal.Length    Sepal.Width     Petal.Length    Petal.Width   
+# Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
+# 1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600   1st Qu.:0.300  
+# Median :5.800   Median :3.000   Median :4.350   Median :1.300  
+# Mean   :5.843   Mean   :3.057   Mean   :3.758   Mean   :1.199  
+# 3rd Qu.:6.400   3rd Qu.:3.300   3rd Qu.:5.100   3rd Qu.:1.800  
+# Max.   :7.900   Max.   :4.400   Max.   :6.900   Max.   :2.500 
+boxplot(dat, col=rainbow(4))
+
+
+# 缺失值处理
+a <- matrix(c(1:6,NA,8,9), nrow=3)
+a
+#       [,1] [,2] [,3]
+# [1,]    1    4   NA
+# [2,]    2    5    8
+# [3,]    3    6    9
+complete.cases(a) # 是否有缺失值，返回一个逻辑向量,第一行有缺失值
+# [1] FALSE  TRUE  TRUE 
+b <- c(1,2,NA)
+complete.cases(b) #最后一个值是缺失值
+# [1]  TRUE  TRUE FALSE
+complete.cases(a, b) # a,b同时缺失的, 相当于complete.cases(a) & complete.cases(b)
+# [1] FALSE  TRUE FALSE
+
+a[complete.cases(a, b)] # TRUE和FALSE选择行
+# [1] 2 5 8
+
+a[complete.cases(a),] #  无缺失值行
+#       [,1] [,2] [,3]
+# [1,]    2    5    8
+# [2,]    3    6    9
+a <- na.omit(a) # 删除有缺失值的行
+a
+# [,1] [,2] [,3]
+# [1,]    2    5    8
+# [2,]    3    6    9
+# attr(,"na.action")
+# [1] 1
+# attr(,"class")
+# [1] "omit"
+
+# 线性回归
+head(iris)
+#         Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+# 1          5.1         3.5          1.4         0.2  setosa
+# 2          4.9         3.0          1.4         0.2  setosa
+# 3          4.7         3.2          1.3         0.2  setosa
+# 4          4.6         3.1          1.5         0.2  setosa
+# 5          5.0         3.6          1.4         0.2  setosa
+# 6          5.4         3.9          1.7         0.4  setosa
+
+# 标准化
+sl <- scale(iris[,1])
+pw <- scale(iris[,4])
+model <- lm(pw~sl) # pw因变量, sl自变量
+summary(model) # intercept的P值过大
+# Call:
+#   lm(formula = pw ~ sl)
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -1.26825 -0.47146 -0.02345  0.37243  1.61799 
+# 
+# Coefficients:
+#               Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) 1.403e-15  4.713e-02     0.0        1    
+# sl          8.179e-01  4.729e-02    17.3   <2e-16 ***
+#   ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.5772 on 148 degrees of freedom
+# Multiple R-squared:  0.669,	Adjusted R-squared:  0.6668 
+# F-statistic: 299.2 on 1 and 148 DF,  p-value: < 2.2e-16
+
+model1 <- lm(pw~sl-1) 
+summary(model1)
+# Call:
+#   lm(formula = pw ~ sl - 1)
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -1.26825 -0.47146 -0.02345  0.37243  1.61799 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# sl  0.81794    0.04713   17.36   <2e-16 ***
+#   ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.5753 on 149 degrees of freedom
+# Multiple R-squared:  0.669,	Adjusted R-squared:  0.6668 
+# F-statistic: 301.2 on 1 and 149 DF,  p-value: < 2.2e-16
+plot(pw,sl,col='red')
+
+
+# 多远线性回归
+s.l <- scale(iris[,1])
+s.w <- scale(iris[,2])
+p.l <- scale(iris[,3])
+p.w <- scale(iris[,4])
+model <- lm(s.l~s.w+p.l+p.w)
+summary(model) # intercepet的p值过大
+# Call:
+#   lm(formula = s.l ~ s.w + p.l + p.w)
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -1.00012 -0.26555  0.02264  0.23802  1.02129 
+# 
+# Coefficients:
+#              Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) -1.176e-16  3.102e-02   0.000        1    
+# s.w          3.426e-01  3.508e-02   9.765  < 2e-16 ***
+#   p.l          1.512e+00  1.209e-01  12.502  < 2e-16 ***
+#   p.w         -5.122e-01  1.174e-01  -4.363 2.41e-05 ***
+#   ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.3799 on 146 degrees of freedom
+# Multiple R-squared:  0.8586,	Adjusted R-squared:  0.8557 
+# F-statistic: 295.5 on 3 and 146 DF,  p-value: < 2.2e-16
+model1 <- lm(s.l~s.w+p.l+p.w-1)# -1把intercept去掉
+summary(model1)
+# Call:
+#   lm(formula = s.l ~ s.w + p.l + p.w - 1)
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -1.00012 -0.26555  0.02264  0.23802  1.02129 
+# 
+# Coefficients:
+#         Estimate Std. Error t value Pr(>|t|)    
+#   s.w  0.34258    0.03496   9.799  < 2e-16 ***
+#   p.l  1.51175    0.12050  12.545  < 2e-16 ***
+#   p.w -0.51224    0.11701  -4.378 2.26e-05 ***
+#   ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.3786 on 147 degrees of freedom
+# Multiple R-squared:  0.8586,	Adjusted R-squared:  0.8557 
+# F-statistic: 297.6 on 3 and 147 DF,  p-value: < 2.2e-16
+
+# 残差图
+plot(model1,1,col='red') # 第二个参数1表示残差图
+# QQ图
+plot(model1,2,col='green') # 第二个参数2表示QQ图
+
+
+# 主成分分析
+head(swiss)
+#            Fertility Agriculture Examination Education Catholic Infant.Mortality
+# Courtelary        80.2        17.0          15        12     9.96             22.2
+# Delemont          83.1        45.1           6         9    84.84             22.2
+# Franches-Mnt      92.5        39.7           5         5    93.40             20.2
+# Moutier           85.8        36.5          12         7    33.77             20.3
+# Neuveville        76.9        43.5          17        15     5.16             20.6
+# Porrentruy        76.1        35.3           9         7    90.57             26.6
+
+sc <- scale(swiss)
+head(sc)
+#              Fertility Agriculture Examination  Education   Catholic
+# Courtelary   0.8051305  -1.4820682 -0.18668632  0.1062125 -0.7477267
+# Delemont     1.0372847  -0.2447942 -1.31480509 -0.2057867  1.0477479
+# Franches-Mnt 1.7897846  -0.4825622 -1.44015162 -0.6217858  1.2529998
+# Moutier      1.2534283  -0.6234617 -0.56272591 -0.4137863 -0.1768099
+# Neuveville   0.5409551  -0.3152440  0.06400674  0.4182118 -0.8628212
+# Porrentruy   0.4769125  -0.6762990 -0.93876550 -0.4137863  1.1851420
+# Infant.Mortality
+# Courtelary         0.77503669
+# Delemont           0.77503669
+# Franches-Mnt       0.08838778
+# Moutier            0.12272023
+# Neuveville         0.22571757
+# Porrentruy         2.28566429
+cor(swiss) # 查看相关系数
+#                   Fertility Agriculture Examination   Education   Catholic
+# Fertility         1.0000000  0.35307918  -0.6458827 -0.66378886  0.4636847
+# Agriculture       0.3530792  1.00000000  -0.6865422 -0.63952252  0.4010951
+# Examination      -0.6458827 -0.68654221   1.0000000  0.69841530 -0.5727418
+# Education        -0.6637889 -0.63952252   0.6984153  1.00000000 -0.1538589
+# Catholic          0.4636847  0.40109505  -0.5727418 -0.15385892  1.0000000
+# Infant.Mortality  0.4165560 -0.06085861  -0.1140216 -0.09932185  0.1754959
+# Infant.Mortality
+# Fertility              0.41655603
+# Agriculture           -0.06085861
+# Examination           -0.11402160
+# Education             -0.09932185
+# Catholic               0.17549591
+# Infant.Mortality       1.00000000
+
+# 构建模型
+pri <- princomp(sc,cor=TRUE) # 用相关系数做主成分分析cor=TRUE
+summary(pri, loadings = TRUE)
+# Importance of components:
+#                         Comp.1    Comp.2    Comp.3     Comp.4     Comp.5
+# Standard deviation     1.7887865 1.0900955 0.9206573 0.66251693 0.45225403
+# Proportion of Variance 0.5332928 0.1980514 0.1412683 0.07315478 0.03408895
+# Cumulative Proportion  0.5332928 0.7313442 0.8726125 0.94576729 0.97985624
+# Comp.6
+# Standard deviation     0.34765292
+# Proportion of Variance 0.02014376
+# Cumulative Proportion  1.00000000
+
+
+# Loadings:
+#                   Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6
+# Fertility         0.457  0.322  0.174  0.536  0.383  0.473
+# Agriculture       0.424 -0.412        -0.643  0.375  0.309
+# Examination      -0.510  0.125                0.814 -0.224
+# Education        -0.454  0.179 -0.532                0.681
+# Catholic          0.350  0.146 -0.807         0.183 -0.402
+# Infant.Mortality  0.150  0.811  0.160 -0.527 -0.105       
+
+# 确定主成分个数，碎石图
+screeplot(pri,type='line')
+
+# 计算每一个城市在每一主成分上的得分，发现第6个得分非常小
+pred <- predict(pri)
+summary(pred)
+#           Comp.1             Comp.2            Comp.3            Comp.4       
+# Min.   :-5.65566   Min.   :-2.0753   Min.   :-2.6558   Min.   :-0.9615  
+# 1st Qu.:-1.05883   1st Qu.:-0.8876   1st Qu.:-0.6619   1st Qu.:-0.4856  
+# Median : 0.01143   Median : 0.1801   Median : 0.1440   Median :-0.1122  
+# Mean   : 0.00000   Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.0000  
+# 3rd Qu.: 1.44344   3rd Qu.: 0.6298   3rd Qu.: 0.8207   3rd Qu.: 0.4699  
+# Max.   : 3.01439   Max.   : 2.2919   Max.   : 1.3211   Max.   : 1.7129  
+# Comp.5             Comp.6       
+# Min.   :-0.93784   Min.   :-0.8616  
+# 1st Qu.:-0.26372   1st Qu.:-0.2489  
+# Median :-0.03847   Median :-0.0184  
+# Mean   : 0.00000   Mean   : 0.0000  
+# 3rd Qu.: 0.31976   3rd Qu.: 0.2717  
+# Max.   : 0.82572   Max.   : 0.7673 
+
+# 特征值
+y <- eigen(cor(sc))
+y$values # 六个主成分的特征值
+# [1] 3.1997570 1.1883082 0.8476098 0.4389287 0.2045337 0.1208626
+scores <- (y$values[1]*pred[,1] + y$values*pred[,2] + y$values*pred[,3] + y$values*pred[,4]) / sum(y$values[c(1:4)])
+scores
+# Courtelary     Delemont Franches-Mnt      Moutier   Neuveville   Porrentruy 
+# 1.58253269   1.12754668   1.45166968   0.59538781  -0.16744077   0.80685905 
+# Broye        Glane      Gruyere       Sarine      Veveyse        Aigle 
+# 1.10112769   1.46445949   0.91326881   0.63720999   1.16467447  -0.47735941 
+# Aubonne     Avenches     Cossonay    Echallens     Grandson     Lausanne 
+# -0.21310444  -0.06249802  -0.36923235   0.31140823  -0.20442557  -1.56711679 
+# La Vallee       Lavaux       Morges       Moudon        Nyone         Orbe 
+# -2.27595100  -0.26128112  -0.47478689   0.18556506  -0.77150197  -0.55978431 
+# Oron      Payerne Paysd'enhaut        Rolle        Vevey      Yverdon 
+#   0.69724961   0.51676831   0.51867371  -0.42139756  -1.09215105  -0.05587075 
+#      Conthey    Entremont       Herens     Martigwy      Monthey   St Maurice 
+#  -0.14265069   0.57632330   1.13508743   0.70147442   1.16865739   0.64150056 
+#       Sierre         Sion       Boudry La Chauxdfnd     Le Locle    Neuchatel 
+#   1.09985141   0.38860909  -0.46390368  -0.93258573  -0.66032052  -1.71030109 
+#   Val de Ruz ValdeTravers V. De Geneve  Rive Droite  Rive Gauche 
+#   1.08719196  -0.32910905  -3.54963193  -1.29418366  -1.51785135 
+# 
+
+dim(swiss) # [1] 47  6
+plot(scores)
+
+
+
+
+# R machine learning
+# nnet 包
+# install.packages('nnet')
+library('nnet')
+?nnet
+# 构造函数
+# Species ~ 表示对除Species的参数你和
+# size=10 表示10个隐藏层节点
+# range 初始化随机权值
+# decay 经元输入权重的一个修改偏正参数，表明权值递减，防止过拟合
+# maxit 最大反馈迭代次数
+# skip 是否允许跳过隐藏层
+# trace 是否要最优化
+
+model.net <- nnet(Species ~ ., linout=F, size=10, decay=0.01, maxit=1000, trace=F, data=iris)
+pre.forest = predict(model.net, iris, type='class')
+table(pre.forest, iris$Species)
+# pre.forest   setosa versicolor virginica
+# setosa         50          0         0
+# versicolor      0         49         0
+# virginica       0          1        50
+
+
+# k-mean算法
+kc <- kmeans(iris[,c(1:4)],3)
+summary(kc)
+#                 Length Class  Mode   
+# cluster      150    -none- numeric
+# centers       12    -none- numeric
+# totss          1    -none- numeric
+# withinss       3    -none- numeric
+# tot.withinss   1    -none- numeric
+# betweenss      1    -none- numeric
+# size           3    -none- numeric
+# iter           1    -none- numeric
+# ifault         1    -none- numeric
+kc
+# K-means clustering with 3 clusters of sizes 50, 38, 62
+# 
+# Cluster means:
+#   Sepal.Length Sepal.Width Petal.Length Petal.Width
+# 1     5.006000    3.428000     1.462000    0.246000
+# 2     6.850000    3.073684     5.742105    2.071053
+# 3     5.901613    2.748387     4.393548    1.433871
+# 
+# Clustering vector:
+#   [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+# [40] 1 1 1 1 1 1 1 1 1 1 1 3 3 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2
+# [79] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 3 2 2 2 2 3 2 2 2 2 2 2 3 3 2 2
+# [118] 2 2 3 2 3 2 3 2 2 3 3 2 2 2 2 2 3 2 2 2 2 3 2 2 2 3 2 2 2 3 2 2 3
+# 
+# Within cluster sum of squares by cluster:
+#   [1] 15.15100 23.87947 39.82097
+# (between_SS / total_SS =  88.4 %)
+# 
+# Available components:
+#   
+#   [1] "cluster"      "centers"      "totss"        "withinss"     "tot.withinss"
+# [6] "betweenss"    "size"         "iter"         "ifault" 
+kc$cluster
+# [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+# [40] 1 1 1 1 1 1 1 1 1 1 1 3 3 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2
+# [79] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 3 2 2 2 2 3 2 2 2 2 2 2 3 3 2 2
+# [118] 2 2 3 2 3 2 3 2 2 3 3 2 2 2 2 2 3 2 2 2 2 3 2 2 2 3 2 2 2 3 2 2 3
+kc$centers
+#      Sepal.Length Sepal.Width Petal.Length Petal.Width
+# 1     5.006000    3.428000     1.462000    0.246000
+# 2     6.850000    3.073684     5.742105    2.071053
+# 3     5.901613    2.748387     4.393548    1.433871
+
+library('ggplot2')
+qplot(iris[,1],iris[,2],colour=iris$Species)
+
+
+
+
+# 决策树
+rm(list=ls())
+library(MASS)
+library(rpart)
+# 绑定数据集，便于操作
+attach(Pima.tr)
+summary(Pima.tr)
+#　cart决策树分析
+# 拟合除了type之外的特征
+cart <- rpart(type~., data=Pima.tr, control=rpart.control(cp=0))
+summary(cart)
+par(xpd=TRUE)
+plot(cart, main='未剪枝') # 画出决策树
+text(cart)
+
+# 剪枝
+# cp值为复杂系数
+# cp=0.1 叶节点为3，留3个枝
+cart1 <- prune(cart, cp=0.1)
+# cp=0.3 叶节点为5，留5个枝
+cart2 <- prune(cart, cp=0.03)
+par(mfrow=c(1,2), xpd=TRUE)
+plot(cart1, main='留3个叶节点')
+text(cart1)
+plot(cart2, main='留5个叶节点')
+text(cart2)
+
+# 预测
+# 测试数据集检验
+# 未剪枝
+pred <- predict(cart, Pima.te, type='class')
+# 建立预测交叉矩阵
+m <- table(type=Pima.te$type, predict=pred)
+m
+# predict
+# type   No Yes
+# No  182  41
+# Yes  48  61
+sum(diag(m)) / sum(m)
+# 叶子节点为3
+pred1 <- predict(cart1, Pima.te, type='class')
+m1 <- table(type=Pima.te$type, predict=pred1)
+m1
+# predict
+# type   No Yes
+# No  184  39
+# Yes  51  58
+sum(diag(m1)) / sum(m1) # 准确率用对角线上的除以总的diagnoal line 对角线
+# 叶子节点为5
+pred2 <- predict(cart2, Pima.te, type='class')
+m2 <- table(type=Pima.te$type, predict=pred2)
+m2
+# predict
+# type   No Yes
+# No  193  30
+# Yes  51  58
+sum(diag(m2)) / sum(m2)
+
+
+# 关联度
+# install.packages('arules')
+# install.packages('arulesViz')
+library(arules)
+library(arulesViz)
+data('IncomeESL') # 加载数据集
+IncomeESL <- IncomeESL[complete.cases(IncomeESL),] # 去除空值行
+names(IncomeESL)
+# [1] "income"                "sex"                   "marital status"       
+# [4] "age"                   "education"             "occupation"           
+# [7] "years in bay area"     "dual incomes"          "number in household"  
+# [10] "number of children"    "householder status"    "type of home"         
+# [13] "ethnic classification" "language in home"     
+
+dat <- as(IncomeESL, 'transactions')
+rules <- apriori(dat, parameter=list(support=0.1,confidence=0.6))
+summary(rules)
+# set of 2360 rules
+# 
+# rule length distribution (lhs + rhs):sizes
+# 1   2   3   4   5   6 
+# 4 154 680 964 500  58 
+# 
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 1.000   3.000   4.000   3.837   4.000   6.000 
+# 
+# summary of quality measures:
+#   support         confidence          lift            count       
+# Min.   :0.1001   Min.   :0.6003   Min.   :0.9017   Min.   : 688.0  
+# 1st Qu.:0.1122   1st Qu.:0.6940   1st Qu.:1.0486   1st Qu.: 771.8  
+# Median :0.1280   Median :0.7858   Median :1.1400   Median : 880.0  
+# Mean   :0.1515   Mean   :0.8075   Mean   :1.3450   Mean   :1041.6  
+# 3rd Qu.:0.1649   3rd Qu.:0.9397   3rd Qu.:1.5388   3rd Qu.:1134.0  
+# Max.   :0.9129   Max.   :1.0000   Max.   :3.8299   Max.   :6277.0  
+# 
+# mining info:
+#   data ntransactions support confidence
+# dat          6876     0.1        0.6
+
+plot(rules, method='scatterplot')
+#　筛选出有自己房子的关联规则
+rulesOwn <- subset(rules, subset=rhs %in% 'householder status=own')
+inspect(head(sort(rulesOwn), by='support', n=5))　# 降序排序，选出前5支持度
+# lhs                              rhs                        support confidence     lift count
+# [1] {marital status=married}      => {householder status=own} 0.2614892  0.6779789 1.804096  1798
+# [2] {marital status=married,                                                                     
+# language in home=english}    => {householder status=own} 0.2472368  0.6961507 1.852451  1700
+# [3] {marital status=married,                                                                     
+# type of home=house}          => {householder status=own} 0.2329843  0.8279070 2.203053  1602
+# [4] {marital status=married,                                                                     
+# type of home=house,                                                                         
+# language in home=english}    => {householder status=own} 0.2207679  0.8433333 2.244102  1518
+# [5] {marital status=married,                                                                     
+# ethnic classification=white} => {householder status=own} 0.2049156  0.7353862 1.956856  1409
+
+
+# 筛选出income大于40，小于40的两部分数据
+IncomeESL[['income']] <- factor((as.numeric(IncomeESL[['income']])>6)+1,levels=1:2, labels=c('$40-','$40+'))
+# 转化为可以进行关联规则分析的transactions型数据
+Income <- as(IncomeESL, 'transactions')
+# 设置支持度和置信度
+rules <- apriori(Income, parameter=list(support=0.2,confidence=0.6))
+# income>40 增益>1的规则
+rulesIncome <- subset(rules, subset=rhs %in% 'income=$40+' & lift>1)
+# 按照置信度对规则排序展示
+head(inspect(sort(rulesIncome, by='confidence')),n=5)
+# lhs                           rhs             support confidence     lift count
+# [1] {householder status=own,                                                       
+# type of home=house,                                                           
+# language in home=english} => {income=$40+} 0.2020070  0.6762415 1.791154  1389
+# [2] {householder status=own,                                                       
+# type of home=house}       => {income=$40+} 0.2107330  0.6665133 1.765387  1449
+# [3] {householder status=own,                                                       
+# language in home=english} => {income=$40+} 0.2325480  0.6555966 1.736472  1599
+# [4] {householder status=own}   => {income=$40+} 0.2436009  0.6482198 1.716934  1675
+# [5] {marital status=married,                                                       
+# language in home=english} => {income=$40+} 0.2248400  0.6330876 1.676853  1546
+# [6] {marital status=married}   => {income=$40+} 0.2370564  0.6146305 1.627966  1630
