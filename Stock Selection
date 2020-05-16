@@ -1,0 +1,67 @@
+import pandas as pd
+import numpy as np
+from alphalens import utils
+from alphalens import performance
+from alphalens import tears
+from alphalens import plotting
+start = '20170101'
+end = '20191231'
+
+ALL_STOCK = all_instruments(type='CS')
+# GET all the stock order book id
+STOCK_LIST = list(ALL_STOCK["order_book_id"])
+
+
+
+# choose the factors need to be analyzed
+ratio_factor_list = list(pd.read_csv("RATIO_FATCOR_NAME.csv").dropna().iloc[:,1])
+absolute_factor_list = list(pd.read_csv("ABSOLUTE_FATCOR_NAME.csv").dropna().iloc[:,1])
+SELECTED_FACTORS = absolute_factor_list + ratio_factor_list
+print(len(SELECTED_FACTORS))
+
+
+FACTOR_DATA = get_factor(STOCK_LIST,SELECTED_FACTORS,start_date=start,end_date=end)
+FACTOR_DATA = FACTOR_DATA.reset_index()
+# prepare the factor data in a right format could be used in get_factor_and_forward_returns
+FACTOR_DATA = FACTOR_DATA.pivot_table(index=["date","order_book_id"],values=SELECTED_FACTORS)
+FACTOR_DATA.head()
+
+
+PRICE_DATA = get_price(STOCK_LIST,start_date=start, end_date=end, fields="close")
+PRICE_DATA.head()
+
+
+
+TOTAL_DATA = utils.get_clean_factor_and_forward_returns(
+          factor=FACTOR_DATA.iloc[:,0], 
+          prices=PRICE_DATA,
+          periods=(1,),
+#           max_loss=0,
+          quantiles=None,
+          bins=True
+          ).iloc[:,:-1]
+factor_name_list = list(FACTOR_DATA) # get the factor name, which is the columns name of factor_data
+
+# rename each columns to better describe the factor name
+TOTAL_DATA.rename(columns={"1D":"returns","factor":factor_name_list[0]},inplace=True)
+for i in range(1,len(FACTOR_DATA.columns)):
+    merged_data = utils.get_clean_factor_and_forward_returns(
+          factor=FACTOR_DATA.iloc[:,i], 
+          prices=PRICE_DATA, 
+          periods=(1,),
+#           max_loss=0,
+          quantiles=None,
+          bins=True
+          ).iloc[:,:-1]
+    merged_data.rename(columns={"factor":factor_name_list[i]},inplace=True) # specify factor name
+    # just need to merge the factor column of the later merged_data
+    TOTAL_DATA=TOTAL_DATA.merge(merged_data.iloc[:,1:2], left_index=True, right_index=True)
+TOTAL_DATA.head()
+
+
+TOTAL_DATA.to_csv("TOTAL_DATA.csv")
+
+
+
+
+
