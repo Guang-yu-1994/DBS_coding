@@ -191,6 +191,8 @@ exam
 gender <- c('f','m','m','m','f')
 age <- c(12,35,25,12,25) 
 tapply(age, gender, mean)# 根据性别分组，计算年龄均值
+# f    m 
+# 18.5 24.0
 
 
 
