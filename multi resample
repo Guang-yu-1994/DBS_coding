@@ -1,0 +1,7 @@
+def resample_multi(df, period):
+    df = pd.read_csv('e_22.csv',parse_dates=['date'],index_col=['date','asset'])
+    new_df = pd.DataFrame()
+    for symbol in df.index.levels[0]:
+        new_df = new_df.append(df.loc[(symbol,slice(None)),:].reset_index().set_index('date').resample(period).last().reset_index().set_index(['asset','date']))
+    new_df.reset_index().set_index(['date','asset']) 
+    return new_df
